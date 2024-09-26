@@ -3,7 +3,7 @@ import json
 import aiogram
 import random
 
-from aiogram.types import BotCommand, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import BotCommand, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 TOKEN = '7442995070:AAGxh9m7LBzPly6kqTFq58w-vrtNdvP2qMk'
 
@@ -143,7 +143,6 @@ bot = aiogram.Bot(TOKEN)
 dp = aiogram.Dispatcher(bot)
 stickers_id = []
 
-
 kb = ReplyKeyboardMarkup(resize_keyboard=True)
 b1, b2, b3, b4 = (KeyboardButton('/go_joke 😂'),
                   KeyboardButton('/give 🖕'),
@@ -152,32 +151,36 @@ b1, b2, b3, b4 = (KeyboardButton('/go_joke 😂'),
 kb.add(b1, b2, b3, b4)
 
 @dp.message_handler(commands=["start"])
-async def echo(message: aiogram.types.Message):
+async def startuem(message: aiogram.types.Message):
     await message.answer(text='HI', reply_markup=kb)
 
 
 @dp.message_handler(commands=["go_joke"])
-async def echo(message: aiogram.types.Message):
+async def joke(message: aiogram.types.Message):
+    kb2 = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Мем хуйня смотреть спанчбоба', url="https://rt.pornhub.com/"),
+    InlineKeyboardButton(text='Новый анекдот', callback_data="new_anec")] ])
     await message.answer(text='Анекдот для поднятия кондиций:'
                               '\n Ебет один клоун другого, а режиссер думает: «Блять, что-то съемки "Оно 3" пошли не'
-                              ' по плану», но продолжает снимать')
+                              ' по плану», но продолжает снимать', reply_markup=kb2)
 
 
 @dp.message_handler(commands=["give"])
-async def echo(message: aiogram.types.Message):
+async def sticker(message: aiogram.types.Message):
     await bot.send_sticker(message.from_user.id, sticker=random.choice(stickers_id), reply_markup=kb)
 
 
 @dp.message_handler(commands=["location"])
-async def echo(message: aiogram.types.Message):
+async def location(message: aiogram.types.Message):
     await bot.send_location(message.from_user.id, latitude=random.randint(1, 90),
                             longitude=random.randint(1, 180), reply_markup=kb)
 
 
 @dp.message_handler(commands=["picture"])
-async def echo(message: aiogram.types.Message):
+async def picmi(message: aiogram.types.Message):
     await bot.send_photo(message.from_user.id,
-                         "https://avatars.dzeninfra.ru/get-zen_doc/1594475/pub_5ceb78dcae6fed00b3fbe21f_5ceb7e82ae6fed00b3fbe27e/scale_1200",
+                         photo="https://avatars.dzeninfra.ru/get-zen_doc/1594475/pub_5ceb78dcae6fed00b3fbe21f_5ceb7e82ae6fed00b3fbe27e/scale_1200",
+                         caption="Мишаня кондиции",
                          reply_markup=kb)
 
 
@@ -190,6 +193,13 @@ async def all(message: aiogram.types.Message):
     #         chat_id=537932720,
     #         text='А Денис балуется',
     #     )`
+
+
+@dp.callback_query_handler()
+async def take_callback(callback: CallbackQuery):
+    if callback.data == "new_anec":
+        await callback.answer(show_alert=True, text="Ты чё сигма")
+        await joke(message=callback.message)
 
 
 async def setup_bot_commands():
