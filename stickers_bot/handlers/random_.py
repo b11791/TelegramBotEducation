@@ -6,6 +6,7 @@ import random
 import aiogram
 
 from stickers_bot.create_bot import bot
+from stickers_bot.db import SQLite
 from stickers_bot.keyboards.random_ import kb_1, kb_2
 
 
@@ -27,10 +28,35 @@ async def joke(message: aiogram.types.Message):
 
 @random_router.message(Command("give"))
 async def sticker(message: aiogram.types.Message):
-    with open("static/sticker_id.txt") as file:
-        sticker_id = file.readlines()
-    print(random.choice(sticker_id))
-    await message.reply_sticker(sticker=random.choice(sticker_id), reply_markup=kb_1)
+    with open("static/sticker_packs.txt") as file:
+        sticker_packs = file.read().split("\n")
+    full_stickers = {}
+    for pack_name in sticker_packs:
+        with SQLite() as db:
+            pack_id = db.cursor.execute(
+                f"""
+                INSERT INTO stickepacks (name, category_id)
+                VALUES ('{pack_name}', '{random.randint(1, 4)}')
+                RETURNING id
+                """
+            ).fetchone()[0]
+            db.connection.commit()
+
+            object_stickers = await bot.get_sticker_set(pack_name)
+            sql = """
+                INSERT INTO stickers (tg_code, stickerpack_id)
+                VALUES {}
+            """.format(
+                ",\n".join(
+                    f"('{sticker.file_id}', '{pack_id}')"
+                    for sticker in object_stickers.stickers
+                )
+            )
+            with SQLite() as db:
+                db.cursor.execute(sql)
+                db.connection.commit()
+
+
 
 
 @random_router.message(Command("location"))
@@ -63,3 +89,14 @@ async def take_callback(callback: CallbackQuery):
     if callback.data == "new_anec":
         await callback.answer(show_alert=True, text="Ты чё сигма")
         await joke(message=callback.message)
+
+
+
+# Пример динамической клавиатуры
+# kb_1 = ReplyKeyboardMarkup(
+#         resize_keyboard=True,
+#         keyboard=[
+#             [KeyboardButton(text=i["name"])
+#              for i in categories
+#         ],
+#     )

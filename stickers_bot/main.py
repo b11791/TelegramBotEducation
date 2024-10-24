@@ -36,17 +36,38 @@ async def setup_bot_commands():
 
 
 async def set_stickers():
-    with open("static/sticker_packs.txt") as file:
-        sticker_packs = file.readlines()
-    stickers_id = []
-    for sticker_pack_name in sticker_packs:
-        sticker_pack = await bot.get_sticker_set(sticker_pack_name)
-        stickers_id.extend(
-            sticker.file_id
-            for sticker in sticker_pack.stickers
+    sql = """
+        INSERT INTO stickerpack (name, category)
+        VALUES ({name}, {category})
+        """
+    #
+
+    # with open("static/sticker_packs.txt", "r") as file:
+    #     sticker_packs = file.read().split("\n")
+    # for pack_name in sticker_packs:
+    #     stickers_in_pack = await bot.get_sticker_set(pack_name)
+    #     stickers(pack_name) = stickers_in_pack
+    #
+    # for sticker_pack_name in sticker_packs:
+    #     stickers_id(sticker_pack)
+
+        # .extend(
+        #     sticker.file_ida
+        #     for sticker in sticker_pack.stickers
+        # )
+
+    # for name in sticker_packs:
+    #     print(name)
+    with SQLite() as db:
+        db.cursor.execute(
+            sql.format(
+                name=...,
+                category=...,
+            )
         )
-    with open("static/sticker_id.txt", "w") as file:
-        file.write("\n".join(stickers_id))
+    # db.connection.commit()
+#    with open("static/sticker_id.txt", "w") as file:
+#        file.write("\n".join(stickers_id))
     print("Стикерпаки обновлены")
 
 
