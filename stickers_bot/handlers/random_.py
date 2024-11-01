@@ -7,8 +7,7 @@ import aiogram
 
 from stickers_bot.create_bot import bot
 from stickers_bot.db import SQLite
-from stickers_bot.keyboards.random_ import kb_1, kb_2
-
+from stickers_bot.keyboards.random_ import kb_1, kb_2, get_stickers_keyboard
 
 random_router = Router()
 
@@ -25,40 +24,6 @@ async def joke(message: aiogram.types.Message):
                               '\n Ебет один клоун другого, а режиссер думает: «Блять, что-то съемки "Оно 3" пошли не'
                               ' по плану», но продолжает снимать', reply_markup=kb_2)
 
-
-@random_router.message(Command("give"))
-async def sticker(message: aiogram.types.Message):
-    with open("static/sticker_packs.txt") as file:
-        sticker_packs = file.read().split("\n")
-    full_stickers = {}
-    for pack_name in sticker_packs:
-        with SQLite() as db:
-            pack_id = db.cursor.execute(
-                f"""
-                INSERT INTO stickepacks (name, category_id)
-                VALUES ('{pack_name}', '{random.randint(1, 4)}')
-                RETURNING id
-                """
-            ).fetchone()[0]
-            db.connection.commit()
-
-            object_stickers = await bot.get_sticker_set(pack_name)
-            sql = """
-                INSERT INTO stickers (tg_code, stickerpack_id)
-                VALUES {}
-            """.format(
-                ",\n".join(
-                    f"('{sticker.file_id}', '{pack_id}')"
-                    for sticker in object_stickers.stickers
-                )
-            )
-            with SQLite() as db:
-                db.cursor.execute(sql)
-                db.connection.commit()
-
-
-
-
 @random_router.message(Command("location"))
 async def location(message: aiogram.types.Message):
     await bot.send_location(message.from_user.id, latitude=random.randint(1, 90),
@@ -73,9 +38,9 @@ async def picmi(message: aiogram.types.Message):
                          reply_markup=kb_1)
 
 
-@random_router.message()
-async def all(message: aiogram.types.Message):
-    print(await bot.get_sticker_set("legalogu"))
+# @random_router.message()
+# async def all(message: aiogram.types.Message):
+#     print(await bot.get_sticker_set("legalogu"))
     # await message.answer(text=f'Я тебя не понял, но вот твой чат id {message.chat.id}')
     # if message.text == "Пися":
     #     await bot.send_message(
@@ -83,14 +48,15 @@ async def all(message: aiogram.types.Message):
     #         text='А Денис балуется',
     #     )`
 
-
-@random_router.callback_query()
+@random_router.callback_query(aiogram.F.data == "new_anec")
 async def take_callback(callback: CallbackQuery):
-    if callback.data == "new_anec":
-        await callback.answer(show_alert=True, text="Ты чё сигма")
-        await joke(message=callback.message)
+    await callback.answer(show_alert=True, text="Ты чё сигма")
+    await joke(message=callback.message)
 
-
+@random_router.message(Command("stickers"))
+async def stickers_menu(message: aiogram.types.Message):
+    keyboard = get_stickers_keyboard()
+    await message.answer("ВЫбери категорию стикеров", reply_markup=keyboard)
 
 # Пример динамической клавиатуры
 # kb_1 = ReplyKeyboardMarkup(

@@ -8,17 +8,23 @@ from stickers_bot import sql_queries
 from stickers_bot.create_bot import bot
 from stickers_bot.db import SQLite
 from stickers_bot.handlers.random_ import random_router
+from stickers_bot.handlers.stickers import sticker_router
 
 dp = aiogram.Dispatcher()
-dp.include_router(
+dp.include_routers(
     random_router,
+    sticker_router,
 )
 
 
 async def create_tables():
     with SQLite() as db:
-        db.cursor.execute(sql_queries.create_table)
+        db.cursor.execute(sql_queries.create_table_user)
         db.cursor.execute(sql_queries.create_super_user)
+        db.cursor.execute(sql_queries.create_table_category)
+        db.cursor.execute(sql_queries.create_table_stickerpacks)
+        db.cursor.execute(sql_queries.create_table_stickers)
+        db.cursor.execute(sql_queries.create_categories)
         db.connection.commit()
     print("База данных настроена")
 
