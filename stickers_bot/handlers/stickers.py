@@ -11,6 +11,7 @@ from stickers_bot.db import SQLite
 
 sticker_router = Router()
 
+
 @sticker_router.message(Command("give"))
 async def sticker(message: aiogram.types.Message):
     with SQLite() as db:

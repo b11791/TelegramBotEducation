@@ -4,6 +4,8 @@ import aiogram
 
 from aiogram.types import BotCommand
 
+from handlers.auth import auth_router
+from handlers.setters import setter_router
 from stickers_bot import sql_queries
 from stickers_bot.create_bot import bot
 from stickers_bot.db import SQLite
@@ -11,9 +13,12 @@ from stickers_bot.handlers.random_ import random_router
 from stickers_bot.handlers.stickers import sticker_router
 
 dp = aiogram.Dispatcher()
+
 dp.include_routers(
+    auth_router,
     random_router,
     sticker_router,
+    setter_router,
 )
 
 

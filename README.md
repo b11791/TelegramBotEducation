@@ -1,25 +1,9 @@
 # ОБРАЩЕНИЕ К БД
 
-1. Напиши sql запрос в sql_queries.py
-```python
-select_users = """
-SELECT *
-FROM profile
-"""
-```
-2. Используй запрос отак:
+1. Авторизация
 
-    2.1. SELECT
-    ```python
-    # Получение максимальных см
-    with SQLite() as db:
-        result = db.cursor.execute(sql_queries.select_users).fetchall()
-        max_cm = max(user["cm"] for user in result)
-    ```
-    2.2. INSERT / UPDATE / DELETE
-    ```python
-    # Получение максимальных см
-    with SQLite() as db:
-        db.cursor.execute(sql_queries.ZAPROS)
-        db.connection.commit()
-    ```
+   1.1. Если пользователь не зарегистрирован, бот сообщает об этом и выдает сообщение регистрации 
+   
+   1.2. Если пользователь зарегистрирован, бот отвечает на все хендлеры стабильно
+
+   1.3. Регистрация должна проходить с помощью машины состояний.

@@ -37,17 +37,6 @@ async def picmi(message: aiogram.types.Message):
                          caption="Мишаня кондиции",
                          reply_markup=kb_1)
 
-
-# @random_router.message()
-# async def all(message: aiogram.types.Message):
-#     print(await bot.get_sticker_set("legalogu"))
-    # await message.answer(text=f'Я тебя не понял, но вот твой чат id {message.chat.id}')
-    # if message.text == "Пися":
-    #     await bot.send_message(
-    #         chat_id=537932720,
-    #         text='А Денис балуется',
-    #     )`
-
 @random_router.callback_query(aiogram.F.data == "new_anec")
 async def take_callback(callback: CallbackQuery):
     await callback.answer(show_alert=True, text="Ты чё сигма")
@@ -58,11 +47,3 @@ async def stickers_menu(message: aiogram.types.Message):
     keyboard = get_stickers_keyboard()
     await message.answer("ВЫбери категорию стикеров", reply_markup=keyboard)
 
-# Пример динамической клавиатуры
-# kb_1 = ReplyKeyboardMarkup(
-#         resize_keyboard=True,
-#         keyboard=[
-#             [KeyboardButton(text=i["name"])
-#              for i in categories
-#         ],
-#     )

@@ -35,3 +35,10 @@ def get_stickers_keyboard() -> InlineKeyboardMarkup:
     )
 
     return kb
+
+kb3 = ReplyKeyboardMarkup(
+    resize_keyboard=True,
+    keyboard=[
+        [KeyboardButton(text="Вступить в Вагнер")],
+    ],
+)
