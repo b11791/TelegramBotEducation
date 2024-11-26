@@ -9,6 +9,7 @@ from handlers.setters import setter_router
 from stickers_bot import sql_queries
 from stickers_bot.create_bot import bot
 from stickers_bot.db import SQLite
+from stickers_bot.handlers.profile import profile_router
 from stickers_bot.handlers.random_ import random_router
 from stickers_bot.handlers.stickers import sticker_router
 
@@ -19,6 +20,7 @@ dp.include_routers(
     random_router,
     sticker_router,
     setter_router,
+    profile_router,
 )
 
 
@@ -41,6 +43,7 @@ async def setup_bot_commands():
         BotCommand(command="/start", description="начать заново"),
         BotCommand(command="/picture", description="асхаб тамаев"),
         BotCommand(command="/location", description="спортики сват"),
+        BotCommand(command="/edit_profile", description="переобулся тряпка"),
     ]
     await bot.set_my_commands(bot_commands)
     print("Комманды обновлены")

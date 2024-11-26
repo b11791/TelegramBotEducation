@@ -69,3 +69,9 @@ VALUES ({}, '{}', {}, {})
 ON CONFLICT(tg_id) 
 DO NOTHING;
 """
+
+select_user_info = """
+SELECT name, age, cm
+FROM profile 
+WHERE tg_id = {}
+"""

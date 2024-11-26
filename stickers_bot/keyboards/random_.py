@@ -18,6 +18,17 @@ kb_2 = InlineKeyboardMarkup(inline_keyboard=[
     InlineKeyboardButton(text='Новый анекдот', callback_data="new_anec")]
 ])
 
+
+kb_profile = InlineKeyboardMarkup(
+    inline_keyboard=design_buttons(
+        [
+            InlineKeyboardButton(text='Имя', callback_data="edit_name"),
+            InlineKeyboardButton(text='Размер хуя', callback_data="edit_cm"),
+            InlineKeyboardButton(text='Возраст твоей бабки ебаннеоцй', callback_data="edit_age"),
+        ],
+    )
+)
+
 def get_stickers_keyboard() -> InlineKeyboardMarkup:
     with SQLite() as db:
         result = db.cursor.execute("SELECT * from category").fetchall()
